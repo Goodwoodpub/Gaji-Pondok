@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#C9EEEA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Gaji Pondok">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icon.svg">
+<title>Gaji Harian Pondok</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&display=swap">
+<style>
+/* Layout: phone-app shell — glass hero with week total, glass cards, floating bottom tab bar. Single deliberate bright mint-teal look, large type for older readers. */
+:root{
+  color-scheme:light;
+  --bg:#EAF7F6; --bg2:#C9EEEA; --glass:rgba(255,255,255,.78); --glass2:#FFFFFF; --edge:rgba(10,80,84,.14);
+  --ink:#0B2A2E; --muted:#3F6266; --teal:#0A8A8E; --teal-hi:#15B3B1; --teal-deep:#08767A;
+  --ok:#0B8450; --ok-soft:#D5F3E4; --half:#A85F00; --half-soft:#FFEDCF; --danger:#C0352B;
+  --font:"Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;color:var(--ink);font-family:var(--font);font-size:16.5px;line-height:1.5;
+  background:radial-gradient(120% 60% at 80% -10%,#9FE5DF 0%,transparent 60%),radial-gradient(90% 50% at -10% 30%,#D3F5E6 0%,transparent 55%),linear-gradient(180deg,var(--bg2),var(--bg) 55%);background-color:var(--bg);background-attachment:fixed}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.glass{background:var(--glass);border:1px solid var(--edge);border-radius:22px;box-shadow:0 6px 20px rgba(10,80,84,.08);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%)}
+header .wrap{padding-block:22px 6px;display:grid;gap:14px}
+.top{display:flex;align-items:center;gap:12px}
+.avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--teal-deep),var(--teal));font-weight:800;color:#fff;flex:none}
+.top .who0{flex:1;min-width:0}
+.top .who0 b{display:block;font-weight:600}
+.top .who0 small{color:var(--muted);font-size:.9rem}
+.iconbtn{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;flex:none}
+.hello{color:var(--muted);font-size:1rem;margin:6px 0 0}
+h1{font-size:clamp(1.7rem,6.4vw,2.3rem);line-height:1.12;margin:0;font-weight:700;letter-spacing:-.02em;text-wrap:balance}
+h1 em{font-style:italic;font-weight:800;color:var(--teal)}
+.hero{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;flex-wrap:wrap}
+.hero small{color:var(--muted);font-size:.88rem;display:block}
+.hero b{font-size:1.7rem;color:var(--teal-deep);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.hero .sync{font-size:.85rem;color:var(--muted);display:flex;align-items:center;gap:6px}
+.hero .sync::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--teal)}
+main{padding-block:14px calc(120px + env(safe-area-inset-bottom,0px));display:grid;gap:16px}
+.bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn{font:700 .95rem var(--font);border-radius:99px;border:1px solid var(--edge);background:var(--glass);color:var(--ink);padding:10px 16px;cursor:pointer;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.btn:hover{background:var(--glass2)}
+.btn.primary{background:linear-gradient(180deg,var(--teal-hi),var(--teal));border-color:transparent;color:#fff;box-shadow:0 8px 22px rgba(10,138,142,.3)}
+.btn.sm{padding:9px 14px;font-size:.88rem}
+.btn:disabled{opacity:.45;cursor:default}
+button:focus-visible,input:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+input{font:inherit;color:var(--ink);background:#fff;border:1.5px solid var(--edge);border-radius:14px;padding:11px 12px;min-width:0}
+input::placeholder{color:#7F9A9D}
+.datebig{flex:1;min-width:0;font-weight:800;font-size:1.2rem}
+.datebig span{display:block;font-weight:500;font-size:.88rem;color:var(--teal)}
+.round{width:42px;height:42px;padding:0;display:grid;place-items:center;font-size:1.2rem}
+.list{display:grid;gap:10px}
+.row{display:grid;grid-template-columns:1fr auto;gap:12px 14px;padding:16px;align-items:center}
+.who{min-width:0;display:flex;align-items:center;gap:12px}
+.ini{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;background:var(--glass2);border:1px solid var(--edge);font-weight:800;color:var(--teal);flex:none;font-size:1.1rem}
+.who b{display:block;font-weight:700;font-size:1.08rem}
+.who small{color:var(--muted);font-variant-numeric:tabular-nums;font-size:.9rem}
+.seg{display:inline-flex;gap:6px}
+.seg button{border:1px solid var(--edge);background:var(--glass);font:700 .95rem var(--font);color:var(--muted);padding:11px 16px;border-radius:99px;cursor:pointer;border-width:1.5px}
+.seg button[aria-pressed="true"][data-v="1"]{background:linear-gradient(180deg,var(--teal-hi),var(--teal));color:#fff;border-color:transparent}
+.seg button[aria-pressed="true"][data-v="0.5"]{background:var(--half-soft);color:var(--half);border-color:#F2C27B}
+.seg button[aria-pressed="true"][data-v="0"]{background:var(--glass2);color:var(--ink)}
+.extra{grid-column:1/-1;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:.92rem;color:var(--muted);padding-top:12px;border-top:1px solid var(--edge)}
+.extra label{display:flex;align-items:center;gap:6px}
+.extra input{width:110px;padding:7px 10px;font-variant-numeric:tabular-nums;border-radius:12px}
+.pay{margin-left:auto;font-weight:800;font-size:1.15rem;color:var(--ink);font-variant-numeric:tabular-nums}
+.total{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;font-variant-numeric:tabular-nums;background:linear-gradient(135deg,#BDEDEA,#E9FAF8)}
+.total b{font-size:1.45rem;color:var(--teal-deep)}
+.hint{color:var(--muted);font-size:.92rem;margin:0}
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:600px;font-variant-numeric:tabular-nums}
+th,td{padding:12px;text-align:right;border-top:1px solid var(--edge);white-space:nowrap}
+th{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-top:0;font-weight:600}
+th:first-child,td:first-child{text-align:left}
+tfoot td{font-weight:800;color:var(--teal-deep);background:#E3F7F5}
+.pill{display:inline-block;font-size:.82rem;font-weight:700;padding:3px 10px;border-radius:99px;margin-top:4px}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.no{background:var(--half-soft);color:var(--half)}
+.days{display:flex;gap:3px;justify-content:flex-end}
+.d{width:10px;height:20px;border-radius:5px;background:rgba(11,42,46,.12)}
+.d.f{background:var(--teal)} .d.h{background:linear-gradient(to top,var(--half) 50%,rgba(11,42,46,.12) 50%)}
+.range{display:flex;gap:8px;flex-wrap:wrap;align-items:center;color:var(--muted)}
+.range input{width:150px}
+.card{padding:18px;display:grid;gap:12px}
+.card h2{font-size:1.15rem;margin:0;font-weight:700}
+.wrow{display:grid;grid-template-columns:1fr 130px auto;gap:8px;align-items:center}
+.wrow.inactive input{opacity:.5}
+pre{white-space:pre-wrap;background:#fff;border:1px solid var(--edge);border-radius:14px;padding:14px;font:14.5px/1.6 ui-monospace,Menlo,monospace;margin:0;overflow-x:auto;color:var(--ink)}
+.empty{padding:28px 16px;text-align:center;color:var(--muted)}
+.note{background:var(--half-soft);color:var(--half);border:1.5px solid #F2C27B;border-radius:16px;padding:12px 14px;font-size:.95rem}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(104px + env(safe-area-inset-bottom,0px));background:var(--teal);color:#fff;padding:12px 20px;border-radius:99px;font-weight:700;font-size:.95rem;z-index:20}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:15;padding:0 max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));pointer-events:none}
+.tabbar nav{pointer-events:auto;max-width:440px;margin:0 auto;display:flex;gap:4px;padding:8px;border-radius:28px;background:rgba(255,255,255,.9);border:1px solid var(--edge);backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%);box-shadow:0 14px 34px rgba(10,80,84,.18)}
+.tabbar button{flex:1;display:grid;justify-items:center;gap:3px;background:none;border:0;color:var(--muted);font:700 .85rem var(--font);padding:9px 4px;border-radius:20px;cursor:pointer}
+.tabbar svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tabbar button[aria-selected="true"]{color:#fff;background:linear-gradient(180deg,var(--teal-hi),var(--teal));box-shadow:0 6px 18px rgba(10,138,142,.35)}
+@media (max-width:520px){
+  .row{grid-template-columns:1fr}
+  .seg{display:flex} .seg button{flex:1}
+  .wrow{grid-template-columns:1fr 110px}
+  .wrow .btn{grid-column:1/-1}
+}
+@media (prefers-reduced-motion:no-preference){.btn,.seg button,.tabbar button{transition:background .2s,color .2s,box-shadow .2s}}
+.login{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px));background:inherit;background:radial-gradient(120% 60% at 80% -10%,#9FE5DF 0%,transparent 60%),linear-gradient(180deg,var(--bg2),var(--bg) 60%)}
+.login .card{width:100%;max-width:380px;text-align:center;padding:28px 22px}
+.login h1{font-size:1.7rem}
+.pin{font-size:2rem;letter-spacing:.5em;text-align:center;padding:14px;font-weight:800;width:100%}
+.err{color:var(--danger);font-weight:600;min-height:1.4em;margin:0}
+body{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+</style>
+</head>
+<body>
+<div class="login" id="login" hidden>
+  <form class="card glass" id="loginForm">
+    <div class="avatar" style="margin:0 auto" aria-hidden="true">GP</div>
+    <h1>Gaji Harian <em>Pondok</em></h1>
+    <p class="hint">Masukkan PIN Anda</p>
+    <input class="pin" id="pin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="12" aria-label="PIN" required>
+    <p class="err" id="loginErr"></p>
+    <button class="btn primary" type="submit" style="width:100%;padding:14px">Masuk</button>
+  </form>
+</div>
+
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="avatar" aria-hidden="true">GP</div>
+      <div class="who0"><b>Pondok · Gaji Harian</b><small id="todayLbl"></small></div>
+      <button class="iconbtn glass" id="logout" title="Keluar" aria-label="Keluar" style="border:1px solid var(--edge);cursor:pointer;color:var(--ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l5-5-5-5M15 12H3"/></svg></button>
+    </div>
+    <div>
+      <p class="hello">Assalamualaikum, <span id="hiName"></span></p>
+      <h1>Siapa saja yang <em>masuk</em> minggu ini?</h1>
+    </div>
+    <div class="hero glass">
+      <div><small>Total gaji minggu ini</small><b id="heroTotal">Rp0</b></div>
+      <div style="text-align:right"><small id="heroDays">0 hari kerja</small><span class="sync" id="sync">Menyambung…</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="ro" class="note" hidden>Tampilan pemilik: lihat gaji yang harus dibayar, lalu tekan <b>Tandai lunas</b> setelah membayar. Absen diisi oleh Kak Umar.</div>
+
+  <section id="v-absen">
+    <div style="display:grid;gap:12px">
+      <div class="bar">
+        <button class="btn round" id="prev" aria-label="Hari sebelumnya">‹</button>
+        <div class="datebig" id="dateLabel">–</div>
+        <input type="date" id="datePick" aria-label="Pilih tanggal">
+        <button class="btn round" id="next" aria-label="Hari berikutnya">›</button>
+      </div>
+      <div class="list" id="absenList"><div class="empty">Memuat daftar nama…</div></div>
+      <p class="hint">Penuh = 1 hari upah, ½ = setengah upah. Lembur dan kasbon diisi dalam rupiah, tersimpan otomatis.</p>
+    </div>
+  </section>
+
+  <section id="v-rekap" hidden>
+    <div style="display:grid;gap:12px">
+      <div class="range">
+        <input type="date" id="rFrom" aria-label="Dari tanggal"> <span>s/d</span>
+        <input type="date" id="rTo" aria-label="Sampai tanggal">
+        <button class="btn sm" id="rThis">Minggu ini</button>
+        <button class="btn sm" id="rLast">Minggu lalu</button>
+      </div>
+      <div class="tbl-wrap glass"><table>
+        <thead><tr><th>Nama</th><th>Kehadiran</th><th>Hari</th><th>Upah</th><th>Lembur</th><th>Kasbon</th><th>Dibayar</th><th></th></tr></thead>
+        <tbody id="rBody"></tbody>
+        <tfoot id="rFoot"></tfoot>
+      </table></div>
+      <div class="card glass">
+        <h2>Teks untuk WhatsApp</h2>
+        <pre id="waText"></pre>
+        <div class="bar"><button class="btn primary" id="copyWa">Salin teks</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="v-tukang" hidden>
+    <div class="card glass">
+      <h2>Daftar nama dan upah harian</h2>
+      <p class="hint">Upah dalam rupiah per hari penuh. Nama yang dinonaktifkan tidak muncul di absen, tapi riwayatnya tetap ada di rekap.</p>
+      <div id="wList" style="display:grid;gap:8px"></div>
+      <div class="bar">
+        <button class="btn" id="addW">+ Tambah nama</button>
+        <button class="btn primary" id="saveW">Simpan</button>
+      </div>
+    </div>
+  </section>
+</main>
+<div class="tabbar"><nav role="tablist">
+  <button role="tab" id="tab-absen" aria-selected="true" data-tab="absen"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h9"/></svg>Absen</button>
+  <button role="tab" id="tab-rekap" aria-selected="false" data-tab="rekap"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M7 15h4"/></svg>Gaji</button>
+  <button role="tab" id="tab-tukang" aria-selected="false" data-tab="tukang"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M16 4.5a3 3 0 0 1 0 6M18 14.8c1.9.7 3 2.5 3 5.2"/></svg>Nama</button>
+</nav></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const rp=n=>"Rp"+Math.round(n||0).toLocaleString("id-ID");
+const pad=n=>String(n).padStart(2,"0");
+const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const parse=s=>{const[a,b,c]=s.split("-").map(Number);return new Date(a,b-1,c)};
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return ymd(d)};
+const HARI=["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+const BLN=["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+const fmtLong=s=>{const d=parse(s);return HARI[d.getDay()]+", "+d.getDate()+" "+BLN[d.getMonth()]+" "+d.getFullYear()};
+const fmtShort=s=>{const d=parse(s);return d.getDate()+" "+BLN[d.getMonth()]};
+const weekOf=s=>{const d=parse(s);const off=(d.getDay()+6)%7;d.setDate(d.getDate()-off);const a=ymd(d);return[a,addDays(a,6)]};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+let loaded=false, canWrite=true, canPay=true;
+const nm=x=>x||'';
+async function api(method,url,body){const r=await fetch(url,{method,headers:body?{'Content-Type':'application/json'}:{},body:body?JSON.stringify(body):undefined,credentials:'same-origin'});let j={};try{j=await r.json()}catch(e){}if(r.status===401){showLogin();throw{code:401}}if(!r.ok)throw{code:r.status,message:j.error||'Gagal'};return j}
+let workers=[];            // [{id,name,rate,active}]
+let absen={};              // date -> {entries:{id:{v,lembur,kasbon}}}
+let bayar={};              // key -> {workers:{id:{paid,amount,at}}}
+const today=ymd(new Date());
+let cur=today;
+let [rFrom,rTo]=weekOf(today);
+let draft=null;
+
+function toast(t){const el=$("#toast");el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,1800)}
+
+/* ---------- tabs ---------- */
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected",x===b));
+  ["absen","rekap","tukang"].forEach(t=>$("#v-"+t).hidden=t!==b.dataset.tab);
+  if(b.dataset.tab==="tukang"){draft=null;renderTukang()}
+  if(b.dataset.tab==="rekap")renderRekap();
+});
+
+/* ---------- absen ---------- */
+function entry(date,id){return (absen[date]&&absen[date].entries&&absen[date].entries[id])||{v:0,lembur:0,kasbon:0}}
+function dayPay(w,e){return (w.rate||0)*(e.v||0)+(Number(e.lembur)||0)}
+
+function renderAbsen(){
+  $("#dateLabel").innerHTML=esc(fmtLong(cur))+(cur===today?"<span>Hari ini</span>":"<span>&nbsp;</span>");
+  $("#datePick").value=cur;
+  const list=$("#absenList");
+  const act=workers.filter(w=>w.active!==false || (absen[cur]&&absen[cur].entries&&absen[cur].entries[w.id]));
+  if(!loaded){list.innerHTML='<div class="empty glass">Memuat data…</div>';return}
+  if(!act.length){list.innerHTML='<div class="empty glass">Belum ada nama. Tambahkan di tab <b>Nama</b>.</div>';return}
+  let total=0, hadir=0;
+  list.innerHTML=act.map(w=>{
+    const e=entry(cur,w.id); const p=dayPay(w,e); total+=p; if(e.v>0)hadir++;
+    const dis=canWrite?"":"disabled";
+    return `<div class="row glass" data-id="${esc(w.id)}">
+      <div class="who"><span class="ini">${esc(w.name.replace(/^(Mas|Pak De|Pak|Bu|Kak)\s+/i,"").charAt(0).toUpperCase())}</span><div><b>${esc(w.name)}</b><small>${rp(w.rate)} / hari</small></div></div>
+      <div class="seg" role="group" aria-label="Kehadiran ${esc(w.name)}">
+        ${[["0","Libur"],["0.5","½ Hari"],["1","Penuh"]].map(([v,l])=>`<button ${dis} data-v="${v}" aria-pressed="${Number(v)===Number(e.v||0)}">${l}</button>`).join("")}
+      </div>
+      <div class="extra">
+        <label>Lembur <input ${dis} id="lb-${esc(w.id)}" inputmode="numeric" data-f="lembur" value="${e.lembur?Number(e.lembur).toLocaleString("id-ID"):""}" placeholder="0"></label>
+        <label>Kasbon <input ${dis} id="kb-${esc(w.id)}" inputmode="numeric" data-f="kasbon" value="${e.kasbon?Number(e.kasbon).toLocaleString("id-ID"):""}" placeholder="0"></label>
+        ${e.by?`<span>· dicatat ${esc(nm(e.by))}</span>`:""}<span class="pay">${rp(p)}</span>
+      </div></div>`}).join("")+
+    `<div class="total glass"><span>${hadir} orang masuk</span><b>${rp(total)}</b></div>`;
+}
+
+async function writeDay(date,id,patch){
+  const cur0=absen[date]?JSON.parse(JSON.stringify(absen[date])):{date,entries:{}};
+  cur0.date=date; cur0.entries=cur0.entries||{};
+  cur0.entries[id]=Object.assign({v:0,lembur:0,kasbon:0},cur0.entries[id],patch);
+  absen[date]=cur0; renderAbsen(); renderRekap();
+  try{absen[date]=await api('PUT','/api/absen/'+date,{id,patch});renderAbsen();renderRekap()}catch(e){if(e.code!==401)toast(e.message||'Gagal menyimpan, coba lagi')}
+}
+$("#absenList").addEventListener("click",e=>{
+  const b=e.target.closest(".seg button"); if(!b||!canWrite)return;
+  writeDay(cur,b.closest(".row").dataset.id,{v:Number(b.dataset.v)});
+});
+$("#absenList").addEventListener("change",e=>{
+  const i=e.target.closest("input[data-f]"); if(!i||!canWrite)return;
+  const n=Number(String(i.value).replace(/[^\d]/g,""))||0;
+  writeDay(cur,i.closest(".row").dataset.id,{[i.dataset.f]:n});
+});
+$("#prev").onclick=()=>{cur=addDays(cur,-1);renderAbsen()};
+$("#next").onclick=()=>{cur=addDays(cur,1);renderAbsen()};
+$("#datePick").onchange=e=>{if(e.target.value){cur=e.target.value;renderAbsen()}};
+
+/* ---------- rekap ---------- */
+function rangeDates(){const out=[];let d=rFrom;let g=0;while(d<=rTo&&g<62){out.push(d);d=addDays(d,1);g++}return out}
+function rKey(){return rFrom+"_"+rTo}
+function calc(){
+  const dates=rangeDates();
+  return workers.map(w=>{
+    let hari=0,upah=0,lembur=0,kasbon=0;const marks=[];
+    dates.forEach(dt=>{const e=entry(dt,w.id);hari+=e.v||0;upah+=(w.rate||0)*(e.v||0);lembur+=Number(e.lembur)||0;kasbon+=Number(e.kasbon)||0;marks.push(e.v)});
+    return {w,hari,upah,lembur,kasbon,bersih:upah+lembur-kasbon,marks};
+  }).filter(r=>r.w.active!==false||r.hari>0||r.kasbon>0);
+}
+function renderHero(){const[a,b]=weekOf(today);let t=0,h=0;let d=a;while(d<=b){workers.forEach(w=>{const e=entry(d,w.id);t+=dayPay(w,e)-(Number(e.kasbon)||0);h+=e.v||0});d=addDays(d,1)}$("#heroTotal").textContent=rp(t);$("#heroDays").textContent=h.toLocaleString("id-ID")+" hari kerja · "+fmtShort(a)+"–"+fmtShort(b)}
+function renderRekap(){renderHero();
+  $("#rFrom").value=rFrom;$("#rTo").value=rTo;
+  const rows=calc(); const paid=(bayar[rKey()]&&bayar[rKey()].workers)||{};
+  const T={hari:0,upah:0,lembur:0,kasbon:0,bersih:0};
+  $("#rBody").innerHTML=rows.length?rows.map(r=>{
+    Object.keys(T).forEach(k=>T[k]+=r[k]);
+    const p=paid[r.w.id];
+    const showDays=r.marks.length<=14;
+    return `<tr><td><b>${esc(r.w.name)}</b></td>
+      <td>${showDays?`<div class="days" aria-hidden="true">${r.marks.map(v=>`<i class="d ${v>=1?"f":v>0?"h":""}"></i>`).join("")}</div>`:"–"}</td>
+      <td>${r.hari.toLocaleString("id-ID")}</td><td>${rp(r.upah)}</td><td>${rp(r.lembur)}</td><td>${r.kasbon?"−"+rp(r.kasbon):rp(0)}</td>
+      <td><b>${rp(r.bersih)}</b><br>${p&&p.paid?'<span class="pill ok">Lunas'+(p.by?' · '+esc(nm(p.by)):'')+'</span>':'<span class="pill no">Belum</span>'}</td>
+      <td>${canPay?`<button class="btn sm" data-pay="${esc(r.w.id)}" data-amt="${r.bersih}">${p&&p.paid?"Batalkan":"Tandai lunas"}</button>`:""}</td></tr>`}).join("")
+    :`<tr><td colspan="8" class="empty">Belum ada absen di rentang ini.</td></tr>`;
+  $("#rFoot").innerHTML=rows.length?`<tr><td>Total</td><td></td><td>${T.hari.toLocaleString("id-ID")}</td><td>${rp(T.upah)}</td><td>${rp(T.lembur)}</td><td>${T.kasbon?"−"+rp(T.kasbon):rp(0)}</td><td>${rp(T.bersih)}</td><td></td></tr>`:"";
+  const lines=["*Gaji Harian Pondok*",fmtShort(rFrom)+" – "+fmtLong(rTo).split(", ")[1],""];
+  rows.forEach(r=>{lines.push(`${r.w.name}: ${r.hari.toLocaleString("id-ID")} hr × ${rp(r.w.rate)} = ${rp(r.upah)}`+(r.lembur?` + lembur ${rp(r.lembur)}`:"")+(r.kasbon?` − kasbon ${rp(r.kasbon)}`:"")+` → *${rp(r.bersih)}*`)});
+  lines.push("","*Total: "+rp(T.bersih)+"*");
+  $("#waText").textContent=lines.join("\n");
+}
+$("#rBody").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-pay]");if(!b||!canPay)return;
+  const k=rKey(); const doc=bayar[k]?JSON.parse(JSON.stringify(bayar[k])):{from:rFrom,to:rTo,workers:{}};
+  doc.workers=doc.workers||{}; const id=b.dataset.pay; const was=doc.workers[id]&&doc.workers[id].paid;
+  doc.workers[id]=was?{paid:false}:{paid:true,amount:Number(b.dataset.amt),at:new Date().toISOString(),by:myName};
+  bayar[k]=doc; renderRekap();
+  try{bayar[k]=await api('PUT','/api/bayar/'+k,{id,paid:!was,amount:Number(b.dataset.amt)});renderRekap();toast(was?"Status dibatalkan":"Ditandai lunas")}catch(err){if(err.code!==401)toast(err.message||"Gagal menyimpan")}
+});
+$("#rFrom").onchange=e=>{if(e.target.value){rFrom=e.target.value;if(rTo<rFrom)rTo=rFrom;renderRekap()}};
+$("#rTo").onchange=e=>{if(e.target.value){rTo=e.target.value;if(rTo<rFrom)rFrom=rTo;renderRekap()}};
+$("#rThis").onclick=()=>{[rFrom,rTo]=weekOf(today);renderRekap()};
+$("#rLast").onclick=()=>{[rFrom,rTo]=weekOf(addDays(today,-7));renderRekap()};
+$("#copyWa").onclick=()=>{const t=$("#waText").textContent;
+  navigator.clipboard.writeText(t).then(()=>toast("Teks disalin")).catch(()=>{const r=document.createRange();r.selectNodeContents($("#waText"));const s=getSelection();s.removeAllRanges();s.addRange(r);toast("Teks dipilih, tekan salin")})};
+
+/* ---------- tukang ---------- */
+function renderTukang(){
+  if(!draft)draft=JSON.parse(JSON.stringify(workers));
+  $("#wList").innerHTML=draft.length?draft.map((w,i)=>`<div class="wrow ${w.active===false?"inactive":""}">
+    <input id="wn-${i}" data-i="${i}" data-f="name" value="${esc(w.name)}" aria-label="Nama" ${canWrite?"":"disabled"}>
+    <input id="wr-${i}" data-i="${i}" data-f="rate" inputmode="numeric" value="${Number(w.rate||0).toLocaleString("id-ID")}" aria-label="Upah per hari" ${canWrite?"":"disabled"}>
+    <button class="btn sm" data-tog="${i}" ${canWrite?"":"disabled"}>${w.active===false?"Aktifkan":"Nonaktifkan"}</button></div>`).join("")
+    :'<p class="hint">Belum ada nama.</p>';
+  $("#addW").disabled=$("#saveW").disabled=!canWrite;
+}
+$("#wList").addEventListener("input",e=>{const i=e.target.dataset.i;if(i==null)return;
+  draft[i][e.target.dataset.f]=e.target.dataset.f==="rate"?(Number(e.target.value.replace(/[^\d]/g,""))||0):e.target.value});
+$("#wList").addEventListener("click",e=>{const b=e.target.closest("[data-tog]");if(!b)return;const w=draft[b.dataset.tog];w.active=w.active===false;renderTukang()});
+$("#addW").onclick=()=>{draft.push({id:"t"+Date.now().toString(36),name:"",rate:0,active:true});renderTukang();const ins=document.querySelectorAll("#wList input[data-f=name]");ins[ins.length-1].focus()};
+$("#saveW").onclick=async()=>{
+  const clean=draft.filter(w=>w.name.trim()).map(w=>({id:w.id,name:w.name.trim(),rate:Number(w.rate)||0,active:w.active!==false}));
+  workers=clean; draft=null; renderTukang(); renderAbsen();
+  try{workers=(await api('PUT','/api/workers',{workers:clean})).workers;renderAbsen();renderRekap();toast("Tersimpan")}catch(e){if(e.code!==401)toast(e.message||"Gagal menyimpan")}
+};
+
+/* ---------- boot ---------- */
+$("#todayLbl").textContent=fmtLong(today);
+renderAbsen(); renderRekap();
+let myName="";
+function showLogin(){$("#login").hidden=false;setTimeout(()=>$("#pin").focus(),50)}
+function applyRole(role){
+  const owner=role==="owner";canWrite=!owner;canPay=true;$("#ro").hidden=!owner;
+  $("#tab-absen").hidden=owner;$("#tab-tukang").hidden=owner;
+  if(owner)$("#tab-rekap").click();
+}
+async function refresh(first){
+  try{
+    const st=await api('GET','/api/state');
+    myName=st.name;$("#hiName").textContent=st.name;
+    if(first)applyRole(st.role);
+    workers=st.workers||[];absen=st.absen||{};bayar=st.bayar||{};loaded=true;
+    const ae=document.activeElement;
+    if(!(ae&&ae.matches("#absenList input, #wList input")))renderAbsen();
+    renderRekap();if(!$("#v-tukang").hidden&&!draft)renderTukang();
+    $("#sync").textContent="Tersimpan otomatis";return true;
+  }catch(e){if(e.code!==401)$("#sync").textContent="Koneksi terputus";return false}
+}
+$("#loginForm").addEventListener("submit",async e=>{
+  e.preventDefault();$("#loginErr").textContent="";
+  try{await api('POST','/api/login',{pin:$("#pin").value});$("#pin").value="";$("#login").hidden=true;draft=null;await refresh(true)}
+  catch(err){if(err.code===401){$("#loginErr").textContent="PIN salah"}else $("#loginErr").textContent=err.message||"Gagal masuk"}
+});
+$("#logout").onclick=async()=>{try{await fetch('/api/logout',{method:'POST'})}catch(e){}location.reload()};
+refresh(true);
+setInterval(()=>{if(!document.hidden&&$("#login").hidden)refresh(false)},20000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&$("#login").hidden)refresh(false)});
+})();
+</script>
+</body>
+</html>
