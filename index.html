@@ -173,10 +173,10 @@ body{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset
     </div>
     <div>
       <p class="hello">Assalamualaikum, <span id="hiName"></span></p>
-      <h1>Siapa saja yang <em>masuk</em> bulan ini?</h1>
+      <h1>Siapa saja yang <em>masuk</em> minggu ini?</h1>
     </div>
     <div class="hero glass">
-      <div><small>Total gaji bulan ini</small><b id="heroTotal">Rp0</b></div>
+      <div><small>Total gaji minggu ini</small><b id="heroTotal">Rp0</b></div>
       <div style="text-align:right"><small id="heroDays">0 hari kerja</small><span class="sync" id="sync">Menyambung…</span></div>
     </div>
   </div>
@@ -201,10 +201,10 @@ body{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset
   <section id="v-rekap" hidden>
     <div style="display:grid;gap:12px">
       <div class="range">
-        <button class="btn round" id="mPrev" aria-label="Bulan sebelumnya">‹</button>
+        <button class="btn round" id="mPrev" aria-label="Minggu sebelumnya">‹</button>
         <div class="datebig" id="mLabel">–</div>
-        <button class="btn sm" id="mNow">Bulan ini</button>
-        <button class="btn round" id="mNext" aria-label="Bulan berikutnya">›</button>
+        <button class="btn sm" id="mNow">Minggu ini</button>
+        <button class="btn round" id="mNext" aria-label="Minggu berikutnya">›</button>
       </div>
       <div class="tbl-wrap glass"><table>
         <thead><tr><th>Nama</th><th>Kehadiran</th><th>Hari</th><th>Upah</th><th>Lembur</th><th>Kasbon</th><th>Gaji bersih</th><th></th></tr></thead>
@@ -259,7 +259,7 @@ let absen={};              // date -> {entries:{id:{v,lembur,kasbon}}}
 let bayar={};              // key -> {workers:{id:{paid,amount,at}}}
 const today=ymd(new Date());
 let cur=today;
-let [rFrom,rTo]=monthOf(today);
+let [rFrom,rTo]=weekOf(today);
 let draft=null;
 
 function toast(t){const el=$("#toast");el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,1800)}
@@ -331,9 +331,9 @@ function calc(){
     return {w,hari,upah,lembur,kasbon,bersih:upah+lembur-kasbon,marks};
   }).filter(r=>r.w.active!==false||r.hari>0||r.kasbon>0);
 }
-function renderHero(){const[a,b]=monthOf(today);let t=0,h=0;let d=a;while(d<=b){workers.forEach(w=>{const e=entry(d,w.id);t+=dayPay(w,e)-(Number(e.kasbon)||0);h+=e.v||0});d=addDays(d,1)}$("#heroTotal").textContent=rp(t);$("#heroDays").textContent=h.toLocaleString("id-ID")+" hari kerja · "+BULAN[parse(a).getMonth()]+" "+parse(a).getFullYear()}
+function renderHero(){const[a,b]=weekOf(today);let t=0,h=0;let d=a;while(d<=b){workers.forEach(w=>{const e=entry(d,w.id);t+=dayPay(w,e)-(Number(e.kasbon)||0);h+=e.v||0});d=addDays(d,1)}$("#heroTotal").textContent=rp(t);$("#heroDays").textContent=h.toLocaleString("id-ID")+" hari kerja · "+fmtShort(a)+"–"+fmtShort(b)}
 function renderRekap(){renderHero();
-  {const d=parse(rFrom);$("#mLabel").innerHTML=BULAN[d.getMonth()]+" "+d.getFullYear()+"<span>"+(rFrom===monthOf(today)[0]?"Bulan berjalan":"&nbsp;")+"</span>"}
+  $("#mLabel").innerHTML=esc(fmtShort(rFrom)+" – "+fmtShort(rTo)+" "+parse(rTo).getFullYear())+"<span>"+(rFrom===weekOf(today)[0]?"Minggu ini":"Senin – Minggu")+"</span>";
   const rows=calc(); const paid=(bayar[rKey()]&&bayar[rKey()].workers)||{};
   const T={hari:0,upah:0,lembur:0,kasbon:0,bersih:0};
   $("#rBody").innerHTML=rows.length?rows.map(r=>{
@@ -343,10 +343,10 @@ function renderRekap(){renderHero();
     return `<tr><td class="nm"><b>${esc(r.w.name)}</b></td>
       <td class="kh" data-l="Kehadiran">${full||half?`${full} penuh${half?` · ${half} setengah`:""}`:"–"}</td>
       <td data-l="Hari">${r.hari.toLocaleString("id-ID")}</td><td data-l="Upah">${rp(r.upah)}</td><td data-l="Lembur">${rp(r.lembur)}</td><td data-l="Kasbon">${r.kasbon?"−"+rp(r.kasbon):rp(0)}</td>
-      <td class="net" data-l="Gaji bulan ini"><b>${rp(r.bersih)}</b><br>${p&&p.paid?'<span class="pill ok">Lunas'+(p.by?' · '+esc(nm(p.by)):'')+'</span>':'<span class="pill no">Belum</span>'}</td>
+      <td class="net" data-l="Gaji minggu ini"><b>${rp(r.bersih)}</b><br>${p&&p.paid?'<span class="pill ok">Lunas'+(p.by?' · '+esc(nm(p.by)):'')+'</span>':'<span class="pill no">Belum</span>'}</td>
       <td class="act">${canPay?`<button class="btn sm" data-pay="${esc(r.w.id)}" data-amt="${r.bersih}">${p&&p.paid?"Batalkan":"Tandai lunas"}</button>`:""}</td></tr>`}).join("")
     :`<tr><td colspan="8" class="empty">Belum ada absen di rentang ini.</td></tr>`;
-  $("#rFoot").innerHTML=rows.length?`<tr><td class="nm">Total bulan ini</td><td class="hide-m"></td><td data-l="Hari">${T.hari.toLocaleString("id-ID")}</td><td data-l="Upah">${rp(T.upah)}</td><td data-l="Lembur">${rp(T.lembur)}</td><td data-l="Kasbon">${T.kasbon?"−"+rp(T.kasbon):rp(0)}</td><td class="net" data-l="Harus dibayar">${rp(T.bersih)}</td><td class="hide-m"></td></tr>`:"";
+  $("#rFoot").innerHTML=rows.length?`<tr><td class="nm">Total minggu ini</td><td class="hide-m"></td><td data-l="Hari">${T.hari.toLocaleString("id-ID")}</td><td data-l="Upah">${rp(T.upah)}</td><td data-l="Lembur">${rp(T.lembur)}</td><td data-l="Kasbon">${T.kasbon?"−"+rp(T.kasbon):rp(0)}</td><td class="net" data-l="Harus dibayar">${rp(T.bersih)}</td><td class="hide-m"></td></tr>`:"";
 
 }
 $("#rBody").addEventListener("click",async e=>{
@@ -357,9 +357,9 @@ $("#rBody").addEventListener("click",async e=>{
   bayar[k]=doc; renderRekap();
   try{bayar[k]=await api('PUT','/api/bayar/'+k,{id,paid:!was,amount:Number(b.dataset.amt)});renderRekap();toast(was?"Status dibatalkan":"Ditandai lunas")}catch(err){if(err.code!==401)toast(err.message||"Gagal menyimpan")}
 });
-$("#mPrev").onclick=()=>{[rFrom,rTo]=monthOf(shiftMonth(rFrom,-1));renderRekap()};
-$("#mNext").onclick=()=>{[rFrom,rTo]=monthOf(shiftMonth(rFrom,1));renderRekap()};
-$("#mNow").onclick=()=>{[rFrom,rTo]=monthOf(today);renderRekap()};
+$("#mPrev").onclick=()=>{[rFrom,rTo]=weekOf(addDays(rFrom,-7));renderRekap()};
+$("#mNext").onclick=()=>{[rFrom,rTo]=weekOf(addDays(rFrom,7));renderRekap()};
+$("#mNow").onclick=()=>{[rFrom,rTo]=weekOf(today);renderRekap()};
 
 
 /* ---------- tukang ---------- */
